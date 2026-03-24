@@ -1,0 +1,21 @@
+[project]
+name = "call-me-maybe"
+version = "0.1.0"
+description = "Function calling via constrained LLM decoding"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "llm_sdk",
+    "numpy>=2.2.6",
+    "pydantic>=2.12.5",
+    "flake8>=6.0.0",
+    "mypy>=1.5.1"
+]
+
+[tool.uv.workspace]
+members = [
+    "llm_sdk",
+]
+
+[tool.uv.sources]
+llm-sdk = { workspace = true }
