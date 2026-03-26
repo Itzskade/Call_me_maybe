@@ -11,11 +11,17 @@ def mask_fn_name_logits(
     Only allow tokens that keep matching a valid function name
     """
     valid_tokens = set()
+    generated_is_complete = generated in valid_names
 
-    for token_id, token_str in vocab.items():
+    for token_str, token_id in vocab.items():
+        if generated_is_complete and token_str == '"':
+            valid_tokens.add(int(token_id))
+            continue
+        candidate = generated + token_str
         for name in valid_names:
-            if (generated + token_str).startswith(name):
+            if name.startswith(candidate):
                 valid_tokens.add(int(token_id))
+                break
 
     mask = np.full_like(logits, -np.inf)
     for idx in valid_tokens:
@@ -35,9 +41,12 @@ def mask_params_logits(
     """
     valid_tokens = set()
 
-    for token_id, token_str in vocab.items():
+    for token_str, token_id in vocab.items():
         if param_type == "number":
-            if token_str.strip().replace(".", "").isdigit() or token_str in [",", "}"]:
+            if (
+                token_str.strip().replace(".", "").isdigit()
+                or token_str in [",", "}"]
+            ):
                 valid_tokens.add(int(token_id))
 
         elif param_type == "string":
