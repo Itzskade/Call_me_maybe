@@ -7,6 +7,8 @@ from src.models.models import (
 )
 from src.engine.mask_logits import mask_fn_name_logits, mask_params_logits
 
+MAX_TOKENS = 100
+
 
 def generate_function_call(
     prompt: PromptInput,
@@ -25,7 +27,7 @@ def generate_function_call(
 
     generated = ""
 
-    while True:
+    for _ in range(MAX_TOKENS):
         text = f"{prompt.prompt}\nFunction: \"{generated}"
         input_ids = model.encode(text)
 
@@ -41,8 +43,19 @@ def generate_function_call(
 
         if next_token == '"':
             break
+    else:
+        raise RuntimeError(
+            f"[ERROR] No se encontró ningún nombre de función válido "
+            f"tras {MAX_TOKENS} tokens. Generado: '{generated}'"
+        )
 
     fn_name = generated[:-1]
+
+    if fn_name not in fn_map:
+        raise KeyError(
+            f"[ERROR] La función '{fn_name}' no existe en las definiciones. "
+            f"Funciones disponibles: {fn_names}"
+        )
 
     args = {}
     current_fn = fn_map[fn_name]
@@ -51,7 +64,7 @@ def generate_function_call(
 
         generated_param = ""
 
-        while True:
+        for _ in range(MAX_TOKENS):
             if param.type == "string":
                 text = (
                     f"{prompt.prompt}\n"
@@ -90,6 +103,11 @@ def generate_function_call(
                     value = 0.0
                 args[param_name] = value
                 break
+        else:
+            raise RuntimeError(
+                f"[ERROR] No se pudo generar el valor del parámetro "
+                f"'{param_name}' tras {MAX_TOKENS} tokens."
+            )
 
     return FunctionCallOutput(
         prompt=prompt.prompt,
