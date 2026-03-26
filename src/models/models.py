@@ -8,8 +8,10 @@ except ImportError:
         "Usage: pip install pydantic"
         )
 
+
 class Parameter(BaseModel):
     type: str
+
 
 class FunctionDefinition(BaseModel):
     name: str
@@ -17,8 +19,10 @@ class FunctionDefinition(BaseModel):
     parameters: Dict[str, Parameter]
     returns: Parameter
 
+
 class PromptInput(BaseModel):
     prompt: str
+
 
 class FunctionCallOutput(BaseModel):
     prompt: str
