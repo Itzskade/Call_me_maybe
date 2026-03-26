@@ -2,8 +2,10 @@ import json
 import numpy as np
 from typing import List
 from llm_sdk import Small_LLM_Model
-from models import FunctionDefinition, PromptInput, FunctionCallOutput
-from mask_logits import mask_fn_name_logits, mask_params_logits
+from src.models.models import (
+    FunctionDefinition, PromptInput, FunctionCallOutput
+)
+from src.engine.mask_logits import mask_fn_name_logits, mask_params_logits
 
 
 def generate_function_call(
@@ -50,7 +52,16 @@ def generate_function_call(
         generated_param = ""
 
         while True:
-            text = f"{prompt.prompt}\n{fn_name}({param_name}={generated_param}"
+            if param.type == "string":
+                text = (
+                    f"{prompt.prompt}\n"
+                    f"{fn_name}({param_name}=\"{generated_param}"
+                )
+            else:
+                text = (
+                    f"{prompt.prompt}\n"
+                    f"{fn_name}({param_name}={generated_param}"
+                )
             input_ids = model.encode(text)
 
             logits = model.get_logits_from_input_ids(input_ids[0].tolist())
@@ -66,19 +77,16 @@ def generate_function_call(
             next_token_id = int(np.argmax(logits))
             next_token = model.decode([next_token_id])
 
-            generated_param += next_token
-
-            if param.type == "string" and '"' in generated_param:
-                value = generated_param.split('"')[0]
-                args[param_name] = value
+            if param.type == "string" and next_token == '"':
+                args[param_name] = generated_param
                 break
 
-            if param.type == "number" and (
-                next_token in [",", "}"]
-            ):
+            generated_param += next_token
+
+            if param.type == "number" and next_token in [",", "}"]:
                 try:
                     value = float(generated_param.strip(",} "))
-                except:
+                except ValueError:
                     value = 0.0
                 args[param_name] = value
                 break
