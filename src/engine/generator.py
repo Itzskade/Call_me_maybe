@@ -90,8 +90,9 @@ def generate_function_call(
             next_token_id = int(np.argmax(logits))
             next_token = model.decode([next_token_id])
 
-            if param.type == "string" and next_token == '"':
-                args[param_name] = generated_param
+            if param.type == "string" and '"' in next_token:
+                cut = next_token.index('"')
+                args[param_name] = generated_param + next_token[:cut]
                 break
 
             generated_param += next_token
