@@ -2,6 +2,7 @@ import json
 from typing import List
 from src.models.models import FunctionDefinition, PromptInput
 
+
 def load_functions(path: str) -> List[FunctionDefinition]:
     """
     Load and validate function definitions from JSON file.
@@ -28,6 +29,7 @@ def load_functions(path: str) -> List[FunctionDefinition]:
     except Exception as e:
         print(f"[ERROR] Unexpected error loading functions: {e}")
         return []
+
 
 def load_prompts(path: str) -> List[PromptInput]:
     """
