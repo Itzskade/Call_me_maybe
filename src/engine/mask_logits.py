@@ -5,46 +5,49 @@ def mask_fn_name_logits(
     logits: np.ndarray,
     generated: str,
     valid_names: list[str],
-    vocab: dict,
+    vocab: dict[str, int],
 ) -> np.ndarray:
-    """
-    Only allow tokens that keep matching a valid function name.
-    """
-    valid_tokens = set()
-    
-    generated_is_complete = (
-        generated in valid_names and
-        not any(n != generated and n.startswith(generated) for n in valid_names)
-    )
+    valid_tokens: set[int] = set()
+
+    is_complete = generated in valid_names
 
     for token_str, token_id in vocab.items():
-        if generated_is_complete and token_str == '"':
-            valid_tokens.add(int(token_id))
+        if is_complete:
+            if token_str == '"':
+                valid_tokens.add(token_id)
             continue
+
         candidate = generated + token_str
+
         for name in valid_names:
             if name.startswith(candidate):
-                valid_tokens.add(int(token_id))
+                valid_tokens.add(token_id)
                 break
 
+    if not valid_tokens:
+        return logits
+
     mask = np.full_like(logits, -np.inf)
+
     for idx in valid_tokens:
-        mask[idx] = logits[idx]
+        if 0 <= idx < len(logits):
+            mask[idx] = logits[idx]
 
     return mask
 
 
 def _is_valid_number_token(token: str, generated: str) -> bool:
-    """
-    Check if a token is valid given what has been generated so far.
-    """
     t = token.strip()
+
     if not t:
         return False
+
     if t == "-":
         return len(generated.strip()) == 0
-    if "." in t:
-        return t == "." and "." not in generated
+
+    if t == ".":
+        return "." not in generated
+
     return t.isdigit()
 
 
@@ -52,24 +55,35 @@ def mask_params_logits(
     logits: np.ndarray,
     generated: str,
     param_type: str,
-    vocab: dict,
+    vocab: dict[str, int],
 ) -> np.ndarray:
-    """
-    Restrict tokens depending on type.
-    """
-    valid_tokens = set()
+    valid_tokens: set[int] = set()
 
     for token_str, token_id in vocab.items():
+
         if param_type == "number":
-            is_terminator = token_str in (",", "}")
-            if is_terminator or _is_valid_number_token(token_str, generated):
-                valid_tokens.add(int(token_id))
+            if token_str in (",", "}"):
+                valid_tokens.add(token_id)
+                continue
+
+            if _is_valid_number_token(token_str, generated):
+                valid_tokens.add(token_id)
 
         elif param_type == "string":
-            valid_tokens.add(int(token_id))
+            if any(x in generated for x in ['"', "\n", "CRITICAL"]):
+                if token_str in ('"', ",", "}"):
+                    valid_tokens.add(token_id)
+                continue
+
+            valid_tokens.add(token_id)
+
+    if not valid_tokens:
+        return logits
 
     mask = np.full_like(logits, -np.inf)
+
     for idx in valid_tokens:
-        mask[idx] = logits[idx]
+        if 0 <= idx < len(logits):
+            mask[idx] = logits[idx]
 
     return mask

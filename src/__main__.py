@@ -2,7 +2,7 @@ import argparse
 from llm_sdk import Small_LLM_Model
 from src.parser.parser import load_prompts, load_definitions
 from src.engine.processor import process_prompts
-from src.engine.generate_output_file import generate_output_file
+from src.io.output import generate_output_file
 
 
 def main() -> None:

@@ -1,13 +1,6 @@
 from enum import Enum
-from typing import Dict, Any
-
-try:
-    from pydantic import BaseModel
-except ImportError:
-    raise ImportError(
-        "[ERROR] Pydantic not installed"
-        "Usage: pip install pydantic"
-        )
+from typing import Any
+from pydantic import BaseModel, ConfigDict
 
 
 class ParamType(str, Enum):
