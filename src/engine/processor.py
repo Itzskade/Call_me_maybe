@@ -8,15 +8,15 @@ def _build_system_prompt(functions: list[FunctionDefinition]) -> str:
     lines = ["You are a function calling engine. Available functions:"]
 
     for fn in functions:
-        lines.append(
-            f"- {fn.name}: {fn.description}, parameters: {fn.parameters}"
-        )
+        lines.append(f"- {fn.name}: {fn.description}, parameters: {fn.parameters}")
 
-    lines.append(
-        "\nCRITICAL: Match the action/verb in the prompt to the right function."
-    )
-
+    lines.append("\nCRITICAL: Match the action/verb in the prompt to the right function.")
     return "\n".join(lines)
+
+
+def _load_json(file_path: str):
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def process_prompts(
@@ -26,9 +26,8 @@ def process_prompts(
 ) -> list[dict]:
 
     try:
-        with open(model.get_path_to_vocab_file(), "r", encoding="utf-8") as f:
-            vocab = json.load(f)
-    except OSError as e:
+        vocab = _load_json(model.get_path_to_vocab_file())
+    except FileNotFoundError as e:
         raise RuntimeError(f"Could not load vocab file: {e}")
     except json.JSONDecodeError as e:
         raise RuntimeError(f"Invalid vocab JSON: {e}")
