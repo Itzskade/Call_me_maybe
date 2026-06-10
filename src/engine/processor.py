@@ -1,5 +1,4 @@
 import json
-from collections.abc import Iterable
 from llm_sdk import Small_LLM_Model
 from src.models.models import FunctionDefinition, PromptInput
 from src.engine.generator import generate_function_call
