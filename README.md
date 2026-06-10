@@ -94,13 +94,13 @@ Validation checks:
 ### Transformers & LLMs
 
 - https://huggingface.co/docs/transformers  
-- https://arxiv.org/abs/1706.03762 (Attention Is All You Need)  
+- https://arxiv.org/abs/1706.03762
 - https://jalammar.github.io/illustrated-transformer/  
 
 ### LLM inference & decoding
 
 - https://huggingface.co/docs/transformers/main/en/generation_strategies  
-- https://arxiv.org/abs/1904.09751 (Neural text degeneration)  
+- https://arxiv.org/abs/1904.09751 
 - https://docs.vllm.ai/  
 
 ### Structured generation / function calling
