@@ -27,9 +27,7 @@ uv run python -m src
 ```
 With custom paths:
 ```
-uv run python -m src --input data/input/function_calling_tests.json \
-                     --functions data/input/functions_definition.json \
-                     --output data/output/results.json
+uv run python -m src --input data/input/function_calling_tests.json --output data/output/results.json
 ```
 ### Lint
 ```
@@ -91,8 +89,27 @@ Validation checks:
 
 ## Resources
 
-- https://huggingface.co/docs/transformers
-- https://docs.pydantic.dev
-- Constrained decoding and structured generation literature
+## Resources
+
+### Transformers & LLMs
+
+- https://huggingface.co/docs/transformers  
+- https://arxiv.org/abs/1706.03762 (Attention Is All You Need)  
+- https://jalammar.github.io/illustrated-transformer/  
+
+### LLM inference & decoding
+
+- https://huggingface.co/docs/transformers/main/en/generation_strategies  
+- https://arxiv.org/abs/1904.09751 (Neural text degeneration)  
+- https://docs.vllm.ai/  
+
+### Structured generation / function calling
+
+- https://platform.openai.com/docs/guides/function-calling  
+- https://json-schema.org/  
+
+### Tokenization
+
+- https://huggingface.co/docs/tokenizers  
 
 **AI usage**: used for documentation drafting, algorithm explanation, and design review support.
