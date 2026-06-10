@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by <rmarin-n>.*
+*This project has been created as part of the 42 curriculum by rmarin-n.*
 
 # Call Me Maybe
 
