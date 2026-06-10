@@ -3,7 +3,7 @@
 all: install run
 
 install:
-	uv sync --cache-dir ~/goinfre
+	uv sync
 
 run:
 	uv run python -m src
