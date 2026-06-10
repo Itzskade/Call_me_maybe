@@ -112,4 +112,10 @@ Validation checks:
 
 - https://huggingface.co/docs/tokenizers  
 
-**AI usage**: used for documentation drafting, algorithm explanation, and design review support.
+### AI usage
+
+AI tools were used during development to help with:
+- understanding and explaining constrained decoding techniques
+- drafting and improving parts of the documentation
+- discussing design choices and architecture trade-offs
+- clarifying concepts related to Transformers and tokenization
