@@ -14,11 +14,6 @@ def _build_system_prompt(functions: list[FunctionDefinition]) -> str:
     return "\n".join(lines)
 
 
-def _load_json(file_path: str):
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
 def process_prompts(
     prompts: list[PromptInput],
     functions: list[FunctionDefinition],
@@ -26,7 +21,8 @@ def process_prompts(
 ) -> list[dict]:
 
     try:
-        vocab = _load_json(model.get_path_to_vocab_file())
+        with open(model.get_path_to_vocab_file(), "r", encoding="utf-8") as f:
+            vocab = json.load(f)
     except FileNotFoundError as e:
         raise RuntimeError(f"Could not load vocab file: {e}")
     except json.JSONDecodeError as e:
